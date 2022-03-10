@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
 	"net/http"
@@ -13,7 +12,7 @@ func NewServer() *Server {
 	s := &Server{
 		Router: mux.NewRouter(),
 	}
-
+	s.SetUpRoutes()
 	return s
 }
 
@@ -21,10 +20,11 @@ type Server struct {
 	Router *mux.Router
 }
 
-func (s *Server) runServer() error {
+func (s *Server) Run(ctx context.Context) error {
 	srv := http.Server{
 		Handler: s.Router,
-		Addr:    fmt.Sprintf(":%d", ":8080"),
+		Addr : ":8080",
+		//Addr:    fmt.Sprintf(":%d", "8080"),
 	}
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -32,11 +32,12 @@ func (s *Server) runServer() error {
 		}
 	}()
 
+	<-ctx.Done()
+	log.Info().Msgf("server...")
+
 	/* Gracefull Shutdown server */
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer func() {
-		cancel()
-	}()
+	defer cancel()
 
 	err := srv.Shutdown(ctx)
 	if err != nil {
@@ -49,9 +50,8 @@ func (s *Server) runServer() error {
 
 	return nil
 }
-func (s *Server) routes() error {
+func (s *Server) SetUpRoutes() error {
 	v1 := s.Router.PathPrefix("/api/v1/").Subrouter()
-
 	v1.HandleFunc("/quotes/random", s.handleQuote()).Methods(http.MethodGet)
 
 	return nil

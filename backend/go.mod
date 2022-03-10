@@ -1,4 +1,4 @@
-module GORANDOMQUOTE
+module github.com/jisusen/gorandomquote/backend
 
 go 1.17
 
