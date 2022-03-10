@@ -1,12 +1,15 @@
-## 1.15 Homework
+## Go Example HTTP Server
 
-### [docker image page] URL
+### Prerequisites for development
 
-- Commands
+Install [golang](https://golang.org/doc/install) 1.17
 
-```shell
-docker pull hub URL
-docker run -p 8080:8080 apps
-```
+# Build project #
 
-- Try it localhost:8080/api/v1/quotes/random
+Go to backend folder and Run `go build`. It will generate binary "backend"
+
+# Execute project
+
+Execute file e.g. `./backend`
+
+Try it localhost:8080/api/v1/quotes/random
